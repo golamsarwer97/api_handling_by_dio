@@ -4,32 +4,33 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
-import '../models/single_user_response.dart';
+import '../models/multiple_user_response.dart';
 import '../http_service.dart';
 
-class SingleUserScreen extends StatefulWidget {
-  const SingleUserScreen({super.key});
+class MultipleUserScreen extends StatefulWidget {
+  const MultipleUserScreen({super.key});
 
   @override
-  State<SingleUserScreen> createState() => _SingleUserScreenState();
+  State<MultipleUserScreen> createState() => _MultipleUserScreenState();
 }
 
-class _SingleUserScreenState extends State<SingleUserScreen> {
+class _MultipleUserScreenState extends State<MultipleUserScreen> {
   late HttpService http;
-  late SingleUserResponse singleUserResponse;
-  late User user;
+  late MultipleUserResponse multipleUserResponse;
+  List<User> users = [];
+
   final dio = Dio();
 
   bool isLoading = false;
 
-  Future getUser() async {
+  Future getMultipleUser() async {
     Response response;
     try {
       isLoading = true;
       print('loading');
 
       // response = await http.getRequest("api/users/2");
-      response = await dio.get('https://reqres.in/api/users/2');
+      response = await dio.get('https://reqres.in/api/users?page=2');
 
       print(response.data.toString());
       print('Stop loading');
@@ -38,8 +39,8 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
 
       if (response.statusCode == 200) {
         setState(() {
-          singleUserResponse = SingleUserResponse.fromJson(response.data);
-          user = singleUserResponse.data!;
+          multipleUserResponse = MultipleUserResponse.fromJson(response.data);
+          users = multipleUserResponse.data!;
         });
       } else {
         print('There is some problem status code not 200');
@@ -53,7 +54,7 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
   @override
   void initState() {
     http = HttpService();
-    getUser();
+    getMultipleUser();
     // getData();
 
     super.initState();
@@ -64,23 +65,24 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink.shade200,
-        title: const Text('Get Single User'),
+        title: const Text('Get multiple User'),
       ),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : user != null
-              ? Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.network(user.avatar.toString()),
-                      const SizedBox(height: 16),
-                      Text('Hello ${user.firstName} ${user.lastName}'),
-                    ],
-                  ),
+          : users.length != null
+              ? ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final user = users[index];
+
+                    return ListTile(
+                      title: Text(user.firstName.toString()),
+                      subtitle: Text(user.email.toString()),
+                      leading: Image.network(user.avatar.toString()),
+                    );
+                  },
                 )
               : const Center(
                   child: Text('No user object'),

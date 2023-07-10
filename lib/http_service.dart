@@ -8,11 +8,7 @@ class HttpService {
   final baseUrl = "https://reqres.in/";
 
   HttpService() {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-      ),
-    );
+    _dio = Dio();
     initializerInterceptors();
   }
 
@@ -20,7 +16,7 @@ class HttpService {
     Response response;
 
     try {
-      response = await _dio!.get(endPoint);
+      response = await _dio!.get("$baseUrl$endPoint");
     } on DioException catch (e) {
       print(e.message);
       throw Exception(e.message);

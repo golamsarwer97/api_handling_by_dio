@@ -1,5 +1,7 @@
-import 'package:api_handling_by_dio/screens/single_user_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../screens/single_user_screen.dart';
+import '../screens/multiple_user_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,11 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Api Handling By Dio',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SingleUserScreen(),
+      home: MultipleUserScreen(),
     );
   }
 }
